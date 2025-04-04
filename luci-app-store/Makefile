@@ -1,4 +1,3 @@
-# Copyright (C) 2016 Openwrt.org
 #
 # This is free software, licensed under the Apache License, Version 2.0 .
 #
@@ -11,9 +10,9 @@ LUCI_DEPENDS:=@(x86_64||aarch64) +curl +opkg +luci-lib-ipkg +tar +libuci-lua +mo
 LUCI_EXTRA_DEPENDS:=luci-lib-taskd (>=1.0.19)
 LUCI_PKGARCH:=all
 
-PKG_VERSION:=0.1.27-4
-# PKG_RELEASE MUST be empty for luci.mk
-PKG_RELEASE:=13
+# 修改点1：分离版本号和修订号
+PKG_VERSION:=0.1.27   # 上游版本号（仅含主/次版本）
+PKG_RELEASE:=4        # 包修订号（避免使用连字符）
 
 ISTORE_UI_VERSION:=0.1.27
 ISTORE_UI_RELEASE:=2
@@ -33,7 +32,15 @@ define Package/luci-app-store/conffiles
 /etc/config/istore
 endef
 
+# 修改点2：定义 Package 时组合版本号
+define Package/luci-app-store
+  SECTION:=luci
+  CATEGORY:=LuCI
+  TITLE:=LuCI support for store
+  VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)  # 正确格式：主版本-修订号
+  DEPENDS:=$(LUCI_DEPENDS)
+endef
+
 include $(TOPDIR)/feeds/luci/luci.mk
 
 # call BuildPackage - OpenWrt buildroot signature
-
